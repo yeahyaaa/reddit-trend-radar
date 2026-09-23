@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install
+        run: pip install -e ".[dev,auth]"
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Type check
+        run: mypy radar
+
+      # No network here: GitHub runners are data-centre addresses and Reddit
+      # answers 403 to those, so the suite covers everything except the live calls.
+      - name: Test
+        run: pytest tests/ --cov=radar --cov-report=term-missing --cov-fail-under=90
