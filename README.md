@@ -24,6 +24,15 @@ Nothing in it is about Linux or software. It reads whatever public subreddits yo
 
 ## What you get
 
+The PDF from a real run, watching r/news, r/soccer and r/technology over one week. The whole
+document and every other format are in [`examples/`](examples/).
+
+<p align="center">
+  <img src="docs/report-page-1.png" alt="First page of a generated briefing" width="620">
+</p>
+
+The same run as Markdown:
+
 ```
 # Reddit Trend Radar - 2026-09-24
 
