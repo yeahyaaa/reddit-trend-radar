@@ -38,7 +38,7 @@ The same run as Markdown:
 
 Watching r/news, r/soccer, r/technology.
 
-Top posts of the period, in Reddit's own ranking. 40 posts: r/news 20, r/soccer 20.
+Top posts of the period, in Reddit's own ranking. 60 posts: r/news 20, r/soccer 20, r/technology 20.
 
 ## r/news
 
@@ -57,8 +57,6 @@ Two links per post, because they go to different places. **Discussion** is the R
 where the argument is. **Source** is the article the post was about, which is usually what you
 actually wanted. A text post has no source, and the field is simply absent rather than
 repeating the thread link twice.
-
-A full run of every format is committed in [`examples/`](examples/).
 
 ## Running it
 
