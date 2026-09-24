@@ -4,9 +4,12 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-This is one of the small automations I build to make the repetitive half of a job survivable.
-For five months I ran five company social accounts, and every week started the same way:
-a dozen tabs open, guessing what people cared about. Now a script does that part.
+This came out of a job, not an afternoon. For five months I ran five company social accounts,
+and every week started the same way: a dozen tabs open, guessing what people cared about. I got
+tired of guessing and built myself a tool for it. This is that tool, put out in the open.
+
+It is one of a set. The rest are the same kind of thing — the repetitive half of a job, handed
+to a script — and they will follow here as I get them into a state fit to publish.
 
 Give it a list of public subreddits and a period. It returns one document with the top posts
 from each, in Reddit's own ranking, with a link to every discussion and to whatever article the
