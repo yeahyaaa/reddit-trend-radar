@@ -22,8 +22,16 @@ class Post:
     score: int | None = None
     num_comments: int | None = None
     upvote_ratio: float | None = None
+    author: str = ""
+    published: str = ""
+    summary: str = ""
+    source_url: str = ""
     source: str = "json"
-    engagement: float = field(default=0.0, compare=False)
+
+    @property
+    def posted_at(self) -> str:
+        """The timestamp trimmed to minutes, which is all anyone reads it to."""
+        return self.published[:16].replace("T", " ") if self.published else ""
 
     @property
     def has_metrics(self) -> bool:
@@ -38,9 +46,26 @@ class Post:
         """Flatten to the columns the CSV exports, blanking metrics we never got."""
         return {
             "subreddit": self.subreddit,
+            "posted": self.posted_at,
+            "author": self.author,
             "title": self.title,
+            "body": self.summary,
             "score": "" if self.score is None else self.score,
             "num_comments": "" if self.num_comments is None else self.num_comments,
-            "engagement": round(self.engagement, 2),
             "url": self.link,
+            "source_url": self.source_url,
         }
+
+
+@dataclass(slots=True)
+class SubredditResult:
+    """What one subreddit gave us, so a run can report itself as it goes."""
+
+    subreddit: str
+    posts: list[Post] = field(default_factory=list)
+    error: str | None = None
+    source: str = "json"
+
+    @property
+    def ok(self) -> bool:
+        return self.error is None

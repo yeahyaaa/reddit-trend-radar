@@ -2,10 +2,11 @@
 .env
 .env.local
 
-# Generated reports
+# Generated reports, except the dated samples kept in examples/
 radar-report.md
 radar-report.csv
 *.csv
+!examples/*.csv
 
 # Python
 __pycache__/
@@ -20,3 +21,7 @@ venv/
 *.egg-info/
 build/
 dist/
+reports/
+
+# The history store is per-machine state, not a sample.
+*.db

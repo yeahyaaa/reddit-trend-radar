@@ -12,6 +12,7 @@ import xml.etree.ElementTree as ElementTree
 
 from radar import net
 from radar.models import Post
+from radar.selftext import body_text, outbound_link
 
 ATOM = "{http://www.w3.org/2005/Atom}"
 REDDIT_ROOT = "https://www.reddit.com"
@@ -46,6 +47,10 @@ def _entry_to_post(entry: ElementTree.Element, subreddit: str) -> Post | None:
         subreddit=subreddit,
         permalink=href.replace(REDDIT_ROOT, "", 1),
         url=href,
+        author=_author(entry),
+        published=entry.findtext(f"{ATOM}published") or "",
+        summary=body_text(entry.findtext(f"{ATOM}content")),
+        source_url=outbound_link(entry.findtext(f"{ATOM}content")),
         source="rss",
     )
 
@@ -53,3 +58,9 @@ def _entry_to_post(entry: ElementTree.Element, subreddit: str) -> Post | None:
 def _href(entry: ElementTree.Element) -> str:
     link = entry.find(f"{ATOM}link")
     return "" if link is None else link.get("href", "")
+
+
+def _author(entry: ElementTree.Element) -> str:
+    """The poster, without the /u/ that Reddit prefixes in the feed."""
+    name = entry.findtext(f"{ATOM}author/{ATOM}name") or ""
+    return name.removeprefix("/u/")

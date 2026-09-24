@@ -93,3 +93,20 @@ def test_fetch_many_skips_failing_subreddits(monkeypatch):
     posts, failures = fetch_many(["ubuntu", "broken"], "day", 5)
     assert [p.title for p in posts] == ["ubuntu"]
     assert failures == ["r/broken: HTTP 404"]
+
+
+def test_the_pause_between_subreddits_can_be_raised(monkeypatch):
+    """Data-centre addresses get throttled harder and need a longer gap."""
+    slept = []
+    monkeypatch.setattr(fetch, "fetch_subreddit", lambda s, p, limit: [])
+    monkeypatch.setattr(fetch.time, "sleep", lambda seconds: slept.append(seconds))
+    list(fetch.fetch_each(["ubuntu", "linux"], "day", 5, pause=12.0))
+    assert slept == [12.0, 12.0]
+
+
+def test_the_default_pause_is_used_when_none_is_given(monkeypatch):
+    slept = []
+    monkeypatch.setattr(fetch, "fetch_subreddit", lambda s, p, limit: [])
+    monkeypatch.setattr(fetch.time, "sleep", lambda seconds: slept.append(seconds))
+    list(fetch.fetch_each(["ubuntu"], "day", 5))
+    assert slept == [fetch.PAUSE_BETWEEN_CALLS]

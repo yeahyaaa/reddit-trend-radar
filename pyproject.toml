@@ -1,13 +1,17 @@
 [project]
 name = "reddit-trend-radar"
-version = "1.1.0"
+version = "2.3.0"
 description = "Daily trend briefing from the Linux and open-source subreddits."
 requires-python = ">=3.11"
 dependencies = ["requests>=2.31"]
 
 [project.optional-dependencies]
 auth = ["python-dotenv>=1.0"]
-dev = ["pytest>=8.0", "pytest-cov>=5.0", "ruff>=0.6", "mypy>=1.11", "types-requests"]
+xlsx = ["openpyxl>=3.1"]
+dev = [
+  "pytest>=8.0", "pytest-cov>=5.0", "ruff>=0.6", "mypy>=1.11",
+  "types-requests", "openpyxl>=3.1", "python-dotenv>=1.0",
+]
 
 [project.scripts]
 radar = "radar.cli:main"
@@ -30,6 +34,11 @@ warn_unreachable = true
 [[tool.mypy.overrides]]
 module = "tests.*"
 disallow_untyped_defs = false
+
+# openpyxl has no type stubs; radar/xlsx.py is the only place it is touched.
+[[tool.mypy.overrides]]
+module = "openpyxl.*"
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

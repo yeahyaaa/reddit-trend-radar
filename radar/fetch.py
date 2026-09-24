@@ -13,12 +13,14 @@ private subreddits the account belongs to.
 from __future__ import annotations
 
 import time
+from collections.abc import Iterator
+from datetime import UTC, datetime
 from typing import Any
 
 import requests
 
 from radar import auth, net
-from radar.models import Post
+from radar.models import Post, SubredditResult
 from radar.rss import fetch_rss
 
 PAUSE_BETWEEN_CALLS = 3.0
@@ -55,19 +57,39 @@ def fetch_subreddit(subreddit: str, period: str = "day", limit: int = 25) -> lis
     return fetch_rss(subreddit, period, limit)
 
 
+def fetch_each(
+    subreddits: list[str], period: str = "day", limit: int = 25, pause: float | None = None
+) -> Iterator[SubredditResult]:
+    """Fetch subreddits one at a time, yielding each outcome as it lands.
+
+    A generator rather than a list so a caller can report progress during a run
+    that takes a minute, instead of going silent and then printing everything.
+    """
+    for name in subreddits:
+        try:
+            posts = fetch_subreddit(name, period, limit)
+            yield SubredditResult(name, posts, source=_source_of(posts))
+        except (FetchError, requests.RequestException) as exc:
+            yield SubredditResult(name, error=str(exc))
+        time.sleep(PAUSE_BETWEEN_CALLS if pause is None else pause)
+
+
 def fetch_many(
     subreddits: list[str], period: str = "day", limit: int = 25
 ) -> tuple[list[Post], list[str]]:
-    """Fetch several subreddits in turn, skipping the ones that fail."""
+    """The whole run at once, for callers that do not care about progress."""
     posts: list[Post] = []
     failures: list[str] = []
-    for name in subreddits:
-        try:
-            posts.extend(fetch_subreddit(name, period, limit))
-        except (FetchError, requests.RequestException) as exc:
-            failures.append(f"r/{name}: {exc}")
-        time.sleep(PAUSE_BETWEEN_CALLS)
+    for result in fetch_each(subreddits, period, limit):
+        if result.ok:
+            posts.extend(result.posts)
+        else:
+            failures.append(f"r/{result.subreddit}: {result.error}")
     return posts, failures
+
+
+def _source_of(posts: list[Post]) -> str:
+    return posts[0].source if posts else "json"
 
 
 def _fetch_json(subreddit: str, period: str, limit: int) -> list[Post]:
@@ -104,6 +126,26 @@ def _get_json(url: str, params: dict[str, Any]) -> dict[str, Any]:
     return payload
 
 
+def _iso(created_utc: Any) -> str:
+    """Reddit gives epoch seconds; the rest of the pipeline speaks ISO."""
+    if not isinstance(created_utc, int | float):
+        return ""
+    return datetime.fromtimestamp(created_utc, tz=UTC).isoformat()
+
+
+def _one_line(selftext: Any) -> str:
+    """Collapse the body to one line, keeping all of it. See radar/selftext.py."""
+    if not isinstance(selftext, str):
+        return ""
+    return " ".join(selftext.split())
+
+
+def _article(raw: dict[str, Any]) -> str:
+    """The URL a link post points at, empty when the post is its own content."""
+    url = raw.get("url") or ""
+    return "" if not isinstance(url, str) or "reddit.com/" in url else url
+
+
 def _to_post(raw: dict[str, Any]) -> Post:
     """Map one listing entry, keeping only the fields the pipeline uses."""
     return Post(
@@ -114,5 +156,9 @@ def _to_post(raw: dict[str, Any]) -> Post:
         score=raw.get("score"),
         num_comments=raw.get("num_comments"),
         upvote_ratio=raw.get("upvote_ratio"),
+        author=raw.get("author") or "",
+        published=_iso(raw.get("created_utc")),
+        summary=_one_line(raw.get("selftext")),
+        source_url=_article(raw),
         source="json",
     )
