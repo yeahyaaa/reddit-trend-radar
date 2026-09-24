@@ -4,18 +4,16 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-This came out of a job, not an afternoon. For five months I ran five company social accounts,
-and every week started the same way: a dozen tabs open, guessing what people cared about. I got
-tired of guessing and built myself a tool for it. This is that tool, put out in the open.
+I originally built this tool to automate audience research while managing multiple corporate social media accounts. It eliminates the guesswork by pulling the top discussions from any public subreddit over a specified time period.
 
-It is one of a set. The rest are the same kind of thing — the repetitive half of a job, handed
-to a script — and they will follow here as I get them into a state fit to publish.
+This is the first of several practical workplace automations I’ll be publishing here as I clean up the code.
 
-Give it a list of public subreddits and a period. It returns one document with the top posts
-from each, in Reddit's own ranking, with a link to every discussion and to whatever article the
-post points at. Markdown to read, Excel to sort, CSV to feed somewhere, LaTeX to print.
+Features:
 
-Nothing in it is about Linux or software. It reads whatever public subreddits you name.
+Inputs: A list of public subreddits and a time frame.
+Outputs: Top posts ranked by Reddit, including direct links to discussions and source articles.
+Formats: Markdown, Excel, CSV, and LaTeX.
+Topic-Agnostic: Works for any niche or public subreddit.
 
 **Contents:** [Output](#what-you-get) · [Running it](#running-it) · [Double-click version](#the-double-click-version)
 · [Formats](#four-formats) · [Model step](#reading-the-posts-not-just-counting-them--optional) · [Comparing runs](#comparing-runs) · [Getting data out of Reddit](#getting-data-out-of-reddit)
