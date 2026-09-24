@@ -4,15 +4,11 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-For five months I ran the social media for five company accounts, and every week I built the
-content calendar the same way: by guessing what people would care about, and then finding out
-afterwards what they had actually been arguing about. The guessing was the part of the job I was
-worst at, and it was the part a machine could obviously do better.
+This is one of the many small automations I built to survive my time managing social media for five different companies. Back then, I wasted hours guessing what audiences cared about. Now, I let a script do it.
 
-This is that problem solved properly, pointed at the audience I care about now. It reads the top
-posts from a handful of Linux and open-source subreddits, ranks them by how much discussion they
-caused rather than how many upvotes they collected, pulls out the words showing up across all of
-them, and writes a short briefing you can read in a minute.
+This tool scrapes open-source subreddits, ranks posts by how much debate they sparked (rather than just upvotes), pulls the recurring keywords, and generates a one-minute briefing so you know exactly what the community is arguing about today.
+
+I’m slowly going through my old scripts, so I'll be uploading more of these practical workplace automations to this repo over time.
 
 **Contents:** [Output](#what-it-looks-like) · [Running it](#running-it) · [Ranking](#how-it-decides-what-is-interesting) · [Data paths](#getting-the-data-out-of-reddit) · [Rate limits](#when-reddit-tells-you-to-slow-down) · [Signing in](#signing-in-optional) · [Tests](#tests) · [Limitations](#what-it-does-not-do)
 
